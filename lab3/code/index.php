@@ -14,13 +14,18 @@
             <label for = "email">Email</label>
             <input type = "email" name = "email" required>
 
-            <label for = "category">Category</label>
-            <select name = "category" required>
-
-                <option value = "cars">Cars</option>
-                <option value = "other">Other</option>
-
-            </select>
+            <?php
+            $categories = scandir('categories');
+            echo '<select name="category" required>';
+            foreach ($categories as $category)
+            {
+                if ((is_dir("categories/$category")) && ($category != '.') && ($category != '..'))
+                {
+                    echo "<option value='$category'>$category</option>";
+                }
+            }
+            echo '</select>';
+            ?>
 
             <label for = "title">Title</label>
             <input type = "text" name = "title" required>
@@ -30,30 +35,44 @@
 
             <input type = "submit" value = "Save">
 
-
         </form>
     </div>
     <div id = "table">
         <table>
             <thead>
             <th>Category</th>
-            <th>Email</th>
             <th>Title</th>
             <th>Description</th>
             </thead>
             <tbody>
-                <tr>
-                    <td>other</td>
-                    <td>fun@f.f</td>
-                    <td>Joke#1</td>
-                    <td>Maybe that's not that bad</td>
-                </tr>
-                <tr>
-                    <td>cars</td>
-                    <td>fun@f.f</td>
-                    <td>Yamaha</td>
-                    <td>Car.</td>
-                </tr>
+            <?php
+            $categoryDir = opendir('categories');
+            while ($file = readdir($categoryDir))
+            {
+                if ((is_dir('categories/'.$file)) && ($file != '.') && ($file != '..'))
+                {
+                    $internalDir = opendir('categories/'.$file);
+                    while ($add = readdir($internalDir))
+                    {
+                        if ($add != '.' && $add != '..')
+                        {
+                            $fileTmp = fopen('categories/'.$file.'/'.$add, 'r');
+                            $tmp = "";
+                            while ($line = fgets($fileTmp))
+                            {
+                                $tmp .= $line;
+                            }
+                            fclose($fileTmp);
+                            echo '<tr>';
+                            echo "<td>$file</td>";
+                            echo "<td>".substr($add, 0, strlen($add) - 4)."</td>";
+                            echo "<td>$tmp</td>";
+                            echo '</tr>';
+                        }
+                    }
+                }
+            }
+            ?>
             </tbody>
         </table>
     </div>
