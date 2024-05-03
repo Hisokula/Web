@@ -15,6 +15,7 @@
         <input type = "email" name = "email" required>
 
         <?php
+        $idSheet = "1ucB_lakmSr89S1LfebLpfGjoW8AS3r8aU1DKqpB3tBI";
         $categories = scandir('categories');
         echo '<select name="category" required>';
         foreach ($categories as $category)
