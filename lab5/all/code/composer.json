@@ -1,0 +1,6 @@
+{
+    "name": "lab5/all",
+    "require": {
+        "google/apiclient": "2.15.0"
+    }
+}
