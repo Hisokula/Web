@@ -15,7 +15,6 @@
         <input type = "email" name = "email" required>
 
         <?php
-        $idSheet = "1ucB_lakmSr89S1LfebLpfGjoW8AS3r8aU1DKqpB3tBI";
         $categories = scandir('categories');
         echo '<select name="category" required>';
         foreach ($categories as $category)
@@ -76,6 +75,52 @@
         ?>
         </tbody>
     </table>
+    <?php
+
+    require_once "vendor/autoload.php";
+
+    use Google\Client;
+    use Google\Service\Drive;
+    use Google\Service\Sheets\SpreadSheet;
+
+    $apiKey = "AIzaSyCyYRO0DaSwd1RF8m-pp4dJ13y_IfD4uew";
+    $clientId = "***";
+    $clientSecret = "***";
+
+    $client = new Google_Client();
+    $client->setApplicationName("testApplicationName");
+    $client->setScopes([Google_Service_Sheets::SPREADSHEETS]);
+    $client->setAccessType("offline");
+    try {
+        $client->setAuthConfig(__DIR__ . "/weblab5-422214-94f4bc6aa30b.json");
+    } catch (\Google\Exception $e) {
+        echo "<p>Ошибка</p>";
+    }
+    $client->useApplicationDefaultCredentials();
+    $client->addScope('https://www.googleapis.com/auth/spreadsheets');
+
+    $service = new Google_Service_Sheets($client);
+    $spreadsheetId = '1ucB_lakmSr89S1LfebLpfGjoW8AS3r8aU1DKqpB3tBI';
+    $range = "sheet";
+    $response = $service->spreadsheets_values->get($spreadsheetId, $range);
+    try {
+
+        for ($i = 1; $i < sizeof($response->getValues()); $i++) {
+            $valuesInRow = array();
+            echo "<div>";
+            for ($j = 0; $j < 3; $j++) {
+                if ($j < sizeof($response->getValues()[$i])) {
+                    echo "<p>" . $response->getValues()[$i][$j] . "</p>";
+                } else {
+                    echo "<p></p>";
+                }
+            }
+            echo "</div>";
+        }
+    } catch (\Google\Service\Exception $e) {
+        echo "Ошибка с получением данных";
+    }
+    ?>
 </div>
 </body>
 </html>
