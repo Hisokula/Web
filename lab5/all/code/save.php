@@ -1,4 +1,5 @@
 <?php
+ob_start();
 require_once "vendor/autoload.php";
 
 use Google\Client;
@@ -41,7 +42,7 @@ try {
 
     $service->spreadsheets_values->update($spreadsheetId, 'sheet!A' . ($lastRowNumber + 1), $body, $options);
 } catch (\Google\Service\Exception $e) {
-    echo "Возникла ошибка с получением данных";
+    echo "Ошибка с получением данных";
 }
 
 

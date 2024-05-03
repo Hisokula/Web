@@ -103,23 +103,20 @@
     $spreadsheetId = '1ucB_lakmSr89S1LfebLpfGjoW8AS3r8aU1DKqpB3tBI';
     $range = "sheet";
     $response = $service->spreadsheets_values->get($spreadsheetId, $range);
-    try {
-
-        for ($i = 1; $i < sizeof($response->getValues()); $i++) {
-            $valuesInRow = array();
-            echo "<div>";
-            for ($j = 0; $j < 3; $j++) {
-                if ($j < sizeof($response->getValues()[$i])) {
-                    echo "<p>" . $response->getValues()[$i][$j] . "</p>";
-                } else {
-                    echo "<p></p>";
-                }
+    echo "<table>";
+    for ($i = 1; $i < sizeof($response->getValues()); $i++) {
+        echo "<tr>";
+        for ($j = 0; $j < 3; $j++) {
+            echo "<td>";
+            if ($j < sizeof($response->getValues()[$i])) {
+                echo $response->getValues()[$i][$j];
             }
-            echo "</div>";
+            echo "</td>";
         }
-    } catch (\Google\Service\Exception $e) {
-        echo "Ошибка с получением данных";
+        echo "</tr>";
     }
+    echo "</table>";
+
     ?>
 </div>
 </body>
