@@ -1,50 +1,26 @@
 <?php
-ob_start();
-require_once "vendor/autoload.php";
-
-use Google\Client;
-use Google\Service\Drive;
-use Google\Service\Sheets\SpreadSheet;
+require_once __DIR__ . '/func.php';
 
 if (empty($_POST['email'])) {
+    // если 'email' пустое, возвращаем ошибку 404 и завершаем выполнение скрипта
     header("HTTP/1.1 404 Not Found");
     exit();
 }
+
+// создание массива для хранения данных из формы
 $inputData = array();
-$inputData[] = !empty($_POST['category']) ? $_POST['category'] : "other";
 $inputData[] = $_POST['email'];
 $inputData[] = !empty($_POST['title']) ? $_POST['title'] : "untitled";
 $inputData[] = $_POST['description'];
+$inputData[] = !empty($_POST['category']) ? $_POST['category'] : "other";
 
-$apiKey = "AIzaSyCyYRO0DaSwd1RF8m-pp4dJ13y_IfD4uew";
-$clientId = "***";
-$clientSecret = "***";
+// подключение к базе данных
+$db = extracted();
 
-$client = new Google_Client();
-$client->setApplicationName("testApplicationName");
-$client->setScopes([Google_Service_Sheets::SPREADSHEETS]);
-$client->setAccessType("offline");
-$client->setAuthConfig(__DIR__ . "/weblab5-422214-94f4bc6aa30b.json");
-$client->useApplicationDefaultCredentials();
-$client->addScope('https://www.googleapis.com/auth/spreadsheets');
+// выполнение SQL-запроса на вставку данных в таблицу 'web.ad'
+$command = $db->query("INSERT INTO web.ad (email, title, description, category) VALUES ( '{$inputData[0]}', '{$inputData[1]}', '{$inputData[2]}', '{$inputData[3]}' )");
 
-$service = new Google_Service_Sheets($client);
-$spreadsheetId = '1ucB_lakmSr89S1LfebLpfGjoW8AS3r8aU1DKqpB3tBI';
-$range = "sheet";
-
-$values = [[$inputData[0], $inputData[2], $inputData[3], $inputData[1]]];
-try {
-    $response = $service->spreadsheets_values->get($spreadsheetId, $range);
-    $lastRowNumber = sizeof($response->getValues());
-
-    $body = new Google_Service_Sheets_ValueRange(['values' => $values]);
-    $options = array('valueInputOption' => 'RAW');
-
-    $service->spreadsheets_values->update($spreadsheetId, 'sheet!A' . ($lastRowNumber + 1), $body, $options);
-} catch (\Google\Service\Exception $e) {
-    echo "Ошибка с получением данных";
-}
-
-
+// перенаправление пользователя на главную страницу после сохранения данных
 header('Location: /');
 exit();
+?>

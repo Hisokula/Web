@@ -1,5 +1,5 @@
 {
-    "name": "lab5/all",
+    "name": "lab5/code",
     "require": {
         "google/apiclient": "2.15.0"
     }
